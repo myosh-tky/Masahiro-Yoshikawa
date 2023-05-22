@@ -1,0 +1,18 @@
+
+# R codes for COLOC analysis using the coloc package in R software # 
+library(remotes) 
+library("coloc") 
+library(dplyr)
+eqtl <- read.table(file="CTSK_eQTLGen.txt", header=T, as.is=T)
+gwas <- read.table(file="NasalPolyp_GWAS.txt", header=T, as.is=T) 
+input <- merge(eqtl, gwas, by="SNP", all=FALSE, suffixes=c("_eqtl","_gwas"))
+result <- coloc.abf(dataset1=list(pvalues=input$pval, type="cc", s=0.02102935552, N=264107), dataset2=list(pvalues=input$Pvalue, type="quant", N=input$NrSamples), MAF=input$maf)
+
+# R codes for locus compare plots for the COLOC analyses #
+library(locuscomparer)
+gwas_fn="NasalPolyp_GWAS.txt"
+eqtl_fn="CTSK_eQTLGen.txt"
+marker_col="SNP"
+pval_col_g="pval"
+pval_col_e="Pvalue"
+locuscompare(in_fn1=gwas_fn, in_fn2=eqtl_fn, title1="GWAS", title2="eQTL", marker_col1= marker_col, pval_col1=pval_col_g, marker_col2=marker_col, pval_col2=pval_col_e)
