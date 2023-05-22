@@ -5,7 +5,7 @@
 ./SMR_x64.exe --bfile input/1000G.EUR.QC --bld input/1000G.EUR.QC --gwas-summary input/NasalPolyps_GWAS.txt --beqtl-summary input/cis-eQTLs-full_eQTLGen_AF_incl_nr_formatted_20191212.new.txt_besd-dense --out myplot --plot --probe Ensembl_Gene_ID --probe-wind 5000 --gene-list input/glist-hg38 --diff-freq-prop 0.05
 library("TeachingDemos")
 source("plot_SMR.r") 
-SMRData = ReadSMRData("myplot. Ensembl_Gene_ID.txt.")
+SMRData = ReadSMRData("myplot.Ensembl_Gene_ID.txt.")
 SMRLocusPlot(data=SMRData, smr_thresh=2.59e-06, heidi_thresh=0.05, plotWindow=500, max_anno_probe=10)
 
 # shell codes for SMR analysis using sQTL data from the GTEx project #
