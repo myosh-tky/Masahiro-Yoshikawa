@@ -1,0 +1,81 @@
+# R codes for two-sample MR analysis using CTSK expression as exposure and nasal polyps as outcome in R software # 
+library(TwoSampleMR)
+ao <- available_outcomes()
+exposure_dat <- extract_instruments(
+  c('eqtl-a-ENSG00000143387'),
+  p1 = 5e-08,
+  clump = TRUE,
+  p2 = 5e-08,
+  r2 = 0.001,
+  kb = 10000,
+  access_token = ieugwasr::check_access_token(),
+  force_server = FALSE)
+exposure_dat <- clump_data(exposure_dat, clump_kb = 10000, clump_r2 = 0.001)
+outcome_dat <- read_outcome_data(
+ filename = "NasalPolyp_GWAS.txt",
+ sep = "\t",
+ snp_col = "rsids",
+ beta_col = "beta",
+ se_col = "sebeta",
+ effect_allele_col = "alt",
+ other_allele_col = "ref",
+ eaf_col = "af_alt",
+ pval_col = "pval",
+)
+dat <- harmonise_data(exposure_dat, outcome_dat, action = 2)
+mr_heterogeneity(dat)
+mr_results <- mr(dat, method_list=c("mr_ivw_fe", "mr_ivw_mre", "mr_egger_regression", "mr_weighted_median", "mr_weighted_mode"))
+or<-generate_odds_ratios(mr_results)
+or
+mr_egger_int1 <- mr_pleiotropy_test(dat)
+mr_egger_int1 
+p <- mr_scatter_plot(mr_results, dat)
+p[[1]]
+press<-run_mr_presso(dat)
+press
+
+# R codes for two-sample MR analysis using CTSK expression as exposure and eosinophil cell count as outcome in R software # 
+library(TwoSampleMR)
+ao <- available_outcomes()
+exposure_dat <- extract_instruments(
+  c('eqtl-a-ENSG00000143387'),
+  p1 = 5e-08,
+  clump = TRUE,
+  p2 = 5e-08,
+  r2 = 0.001,
+  kb = 10000,
+  access_token = ieugwasr::check_access_token(),
+  force_server = FALSE)
+exposure_dat <- clump_data(exposure_dat, clump_kb = 10000, clump_r2 = 0.001)
+outcome_dat <- extract_outcome_data(exposure_dat$SNP, c('ieu-b-33'), proxies = 1, rsq = 0.8, align_alleles = 1, palindromes = 1, maf_threshold = 0.42)
+dat <- harmonise_data(exposure_dat, outcome_dat, action = 2)
+mr_heterogeneity(dat)
+mr_results <- mr(dat, method_list=c("mr_ivw_fe", "mr_ivw_mre", "mr_egger_regression", "mr_weighted_median", "mr_weighted_mode"))
+mr_results
+
+# R codes for IVW multivariable MR analysis using CTSK expression and eosinophil cell count as exposures and nasal polyps as outcome in R software # 
+exposure_dat <- mv_extract_exposures(
+ c("eqtl-a-ENSG00000143387", "ieu-b-33"),
+ clump_r2 = 0.001,
+ clump_kb = 10000,
+ harmonise_strictness = 2,
+ access_token = ieugwasr::check_access_token(),
+ find_proxies = TRUE,
+ force_server = FALSE,
+ pval_threshold = 5e-08
+)
+outcome_dat <- read_outcome_data(
+ filename = "NasalPolyp_GWAS.txt",
+ sep = "\t",
+ snp_col = "rsids",
+ beta_col = "beta",
+ se_col = "sebeta",
+ effect_allele_col = "alt",
+ other_allele_col = "ref",
+ eaf_col = "af_alt",
+ pval_col = "pval",
+)
+mvdat <- mv_harmonise_data(exposure_dat, outcome_dat, harmonise_strictness = 2)
+mv_ivw <- mv_ivw(mvdat, pval_threshold = 5e-08)
+mv_ivw
+
