@@ -1,5 +1,5 @@
 
-# R codes for COLOC analysis using the coloc package in R software # 
+# R codes for COLOC analysis between CTSK expression and nasal polyps using the coloc package in R software # 
 library(remotes) 
 library("coloc") 
 library(dplyr)
